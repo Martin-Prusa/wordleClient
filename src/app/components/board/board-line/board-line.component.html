@@ -1,0 +1,14 @@
+<div>
+  <span *ngFor="let letter of lettersIndex">
+    <input #inputElement
+           [(ngModel)]="values[letter]"
+           (keyup)="next(letter, $event)"
+           [disabled]="disabled" type="text"
+           [class.bg-yellow-300]="classes[letter] === 'BadPosition'"
+           [class.bg-green-300]="classes[letter] === 'Correct'"
+           [class.bg-gray-300]="badWord"
+           minlength="1"
+           maxlength="1"
+           class="border-gray-300 border w-14 h-14 text-center m-1 text-3xl">
+  </span>
+</div>
