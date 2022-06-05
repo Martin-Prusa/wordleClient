@@ -7,12 +7,14 @@ import {HttpClientModule} from "@angular/common/http";
 import { BoardComponent } from './components/board/board.component';
 import { BoardLineComponent } from './components/board/board-line/board-line.component';
 import {FormsModule} from "@angular/forms";
+import { TimerComponent } from './components/timer/timer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BoardComponent,
     BoardLineComponent,
+    TimerComponent,
   ],
   imports: [
     BrowserModule,

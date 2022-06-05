@@ -9,49 +9,49 @@ import {LetterStatus} from "../../../models/letter-status";
 })
 export class BoardLineComponent implements OnInit {
 
-  disabled: boolean = false
-  badWord: boolean = false
-
   @Input()
   lettersIndex!: number[]
 
-  @Output()
-  win: EventEmitter<any> = new EventEmitter()
+  @Input()
+  index!: number
 
   @ViewChildren('inputElement')
   inputElements!: QueryList<ElementRef>
 
-  values = Array<string>(5)
-  classes = Array<LetterStatus>(5)
+  constructor(private wordsService: WordsService) {}
 
-  constructor(private wordsService: WordsService) {
-    this.values.fill('')
-  }
-
-  ngOnInit(): void {
-
-  }
+  ngOnInit(): void {}
 
   next(index: number, $event: KeyboardEvent) {
     if($event.key === 'Backspace') {
       if(index - 1 >= 0) {
         this.inputElements.get(index - 1)!.nativeElement.focus()
-        this.values[index - 1] = ''
+        this.wordsService.lines[this.index].values[index - 1] = ''
       }
       return;
     }
     if(index + 1 >= this.inputElements.length) {
-      if(!(this.values.includes('') || this.values.includes(' '))) {
-        this.wordsService.getWordStatus(this.values.join('')).subscribe(wordStatus => {
-          if(!wordStatus.validWord) this.classes.fill(LetterStatus.None)
-          else this.classes = wordStatus.letterStatuses
-          this.disabled = true
-          this.badWord = !wordStatus.validWord
-          if(wordStatus.winnerWord) this.win.emit()
-        })
+      if(!(this.wordsService.lines[this.index].values.includes('') || this.wordsService.lines[this.index].values.includes(' '))) {
+        this.wordsService.wordStatus(this.wordsService.lines[this.index].values.join(''), this.index)
       }
       return;
     }
     this.inputElements.get(index + 1)!.nativeElement.focus()
+  }
+
+  get values() {
+    return this.wordsService.lines[this.index].values
+  }
+
+  get classes() {
+    return this.wordsService.lines[this.index].classes
+  }
+
+  get badWord() {
+    return this.wordsService.lines[this.index].badWord
+  }
+
+  get disabled() {
+    return this.wordsService.lines[this.index].disabled
   }
 }

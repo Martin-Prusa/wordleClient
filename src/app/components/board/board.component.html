@@ -1,4 +1,4 @@
 <div class="flex flex-col items-center mt-10">
-  <app-board-line *ngFor="let attempt of attempts" [lettersIndex]="lettersIndex" (win)="onWin()"></app-board-line>
+  <app-board-line *ngFor="let attempt of attempts; let i = index" [lettersIndex]="lettersIndex" [index]="i"></app-board-line>
 </div>
 <div *ngIf="isWinner" class="border-t mt-5 text-center p-3 text-xl">Vyhrál jsi</div>

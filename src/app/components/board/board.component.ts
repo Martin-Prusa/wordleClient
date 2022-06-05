@@ -9,8 +9,7 @@ import {WordsService} from "../../services/words.service";
 export class BoardComponent implements OnInit {
   attempts: number[] = []
   lettersIndex: number[] = []
-  isLoading: boolean = true;
-  isWinner: boolean = false
+  isLoading: boolean = true
 
   constructor(private wordsService: WordsService) { }
 
@@ -28,8 +27,7 @@ export class BoardComponent implements OnInit {
     })
   }
 
-
-  onWin() {
-    this.isWinner = true
+  get isWinner() {
+    return this.wordsService.win
   }
 }
