@@ -23,31 +23,39 @@ export class WordsService {
   public win: boolean = false
 
   constructor(private http: HttpClient) {
-    this.resetLines()
+    if (this.isPresent('time') && (this.regenerated.getTime() < new Date(JSON.parse(localStorage.getItem('time')!)).getTime() && this.isPresent('lines'))) {
+      this.lines = JSON.parse(localStorage.getItem('lines')!)
+      if (this.isPresent('win')) this.win = JSON.parse(localStorage.getItem('win')!)
+    } else {
+      this.resetLines()
+    }
     this.time()
   }
 
   wordStatus(value: string, index: number) {
     return this.http.post<WordStatus>(this.url, {value}).subscribe(wordStatus => {
-      if(!wordStatus.validWord) this.lines[index].classes.fill(LetterStatus.None)
+      if (!wordStatus.validWord) this.lines[index].classes.fill(LetterStatus.None)
       else this.lines[index].classes = wordStatus.letterStatuses
       this.lines[index].disabled = true
       this.lines[index].badWord = !wordStatus.validWord
-      if(wordStatus.winnerWord) {
+      if (wordStatus.winnerWord) {
         this.win = true
         this.disableLines()
+        localStorage.setItem("win", JSON.stringify(true))
       }
+      localStorage.setItem("lines", JSON.stringify(this.lines))
     })
   }
 
   private time() {
-     this.http.get<Time>(this.url + 'resetAt').subscribe(time => {
+    this.http.get<Time>(this.url + 'resetAt').subscribe(time => {
       let date = new Date(time.time)
       this.regenerated = date
-      this.seconds = Math.round(date.getTime()/1000 - new Date().getTime()/1000)
+      localStorage.setItem("time", JSON.stringify(this.regenerated))
+      this.seconds = Math.round(date.getTime() / 1000 - new Date().getTime() / 1000)
       console.log(this.seconds)
       const interval = setInterval(() => {
-        if(this.seconds === 0) {
+        if (this.seconds === 0) {
           clearInterval(interval)
           this.resetLines()
           setTimeout(() => this.time(), 5000)
@@ -67,6 +75,13 @@ export class WordsService {
       this.lines[i] = new Line()
     }
     this.win = false
+
+    localStorage.setItem("lines", JSON.stringify(this.lines))
+    localStorage.setItem("win", JSON.stringify(false))
+  }
+
+  private isPresent(field: string): boolean {
+    return localStorage.getItem(field) !== null && localStorage.getItem(field) !== ''
   }
 
   get length(): Observable<Length> {
